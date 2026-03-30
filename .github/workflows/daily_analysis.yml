@@ -36,6 +36,9 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # ✅ 这里添加了全局时区：北京时间
+    env:
+      TZ: Asia/Shanghai
     
     steps:
       - name: 随机延迟
@@ -143,19 +146,16 @@ jobs:
             mkdir -p "$(dirname "$LITELLM_CONFIG")"
             echo "$LITELLM_CONFIG_YAML" > "$LITELLM_CONFIG"
           fi
-
           MODE="${{ github.event.inputs.mode || 'full' }}"
           FORCE_RUN_ARG=""
           if [ "${{ github.event.inputs.force_run }}" = "true" ]; then
             FORCE_RUN_ARG="--force-run"
           fi
-
           echo "=========================================="
           echo "🚀 A股自选股智能分析系统"
           echo "=========================================="
-          echo "⏰ 时间: $(TZ='Asia/Shanghai' date '+%Y-%m-%d %H:%M:%S')"
+          echo "⏰ 时间: $(date '+%Y-%m-%d %H:%M:%S')"
           echo "🎯 运行模式: $MODE"
-
           if [ "$MODE" = "market-only" ]; then
             python main.py --market-review $FORCE_RUN_ARG
           elif [ "$MODE" = "stocks-only" ]; then
